@@ -31,7 +31,7 @@ app.get('/usuario', function (req, res) {
                     err,
                 });
             }
-            console.log(Usuario);
+
             Usuario.countDocuments(options  , (err, conteo) => {
                 res.json({
                     ok:true,
