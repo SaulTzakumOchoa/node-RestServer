@@ -6,9 +6,15 @@ const _ = require('underscore');
 const app = express();
 
 const Usuario = require('../config/models/user');
-
+const { verificarToken, verificarAdminRole } = require('../middlewares/auth');
 // Obtener datos
-app.get('/usuario', function (req, res) {
+app.get('/usuario', verificarToken,function (req, res) {
+
+    return res.json({
+        usuario: req.usuario,
+        nombre: req.usuario.nombre,
+        email: req.usuario.email
+    })
 
     let desde = req.query.desde || 0;
     let limite = req.query.limite || 5;
@@ -44,7 +50,7 @@ app.get('/usuario', function (req, res) {
 });
 
 // Guardar registros nuevos
-app.post('/usuario', function (req, res) {
+app.post('/usuario', [verificarToken, verificarAdminRole], (req, res) => {
     let body = req.body;
 
     let usuario = new Usuario({
@@ -72,7 +78,7 @@ app.post('/usuario', function (req, res) {
 });
 
 // Put actualizar datos
-app.put('/usuario/:id', function(req, res){
+app.put('/usuario/:id', [verificarToken, verificarAdminRole], function(req, res){
     let id = req.params.id;
     let body = _.pick(req.body, ['nombre', 'email', 'img', 'estado', 'role', 'estado', 'google']);
 
@@ -101,7 +107,7 @@ app.put('/usuario/:id', function(req, res){
 });
 
 // Borra un dato
-app.delete('/usuario/:id', function(req, res){
+app.delete('/usuario/:id',[verificarToken, verificarAdminRole], function(req, res){
     
     let id = req.params.id;
     let cambiarEstado = {
@@ -128,6 +134,7 @@ app.delete('/usuario/:id', function(req, res){
         res.json({
             ok: true,
             usuario: resp,
+
         });
     });
 
