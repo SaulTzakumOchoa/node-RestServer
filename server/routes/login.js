@@ -1,6 +1,6 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
+const { createToken } = require('../utils/generateToken');
 const {OAuth2Client} = require('google-auth-library');
 const Usuario = require('../config/models/user');
 
@@ -23,7 +23,7 @@ app.post('/login', (req, res) => {
             return res.status(400).json({
                 ok:false,
                 err: {
-                    message: 'Usuario o contraseña incorrectos'
+                    message: '{Usuario} o contraseña incorrectos'
                 }
             })
         }
@@ -32,12 +32,18 @@ app.post('/login', (req, res) => {
             return res.status(400).json({
                 ok:false,
                 err: {
-                    message: 'Usuario o contraseña incorrectos'
+                    message: 'Usuario o {contraseña} incorrectos'
                 }
             })
         }
 
-        
+        let token = createToken(usuarioDB);
+
+        return res.json({
+            ok: true,
+            usuario: usuarioDB,
+            token,
+        })
     });
 });
 
@@ -88,9 +94,7 @@ app.post('/google', async (req, res) => {
                     }
                 })
             } else{
-                let token = jwt.sign({
-                    usuario: usuarioDB,
-                }, process.env.SEED, {expiresIn: process.env.CADUCITY_TOKEN, algorithm:'HS256'});
+                let token = createToken(usuarioDB);
 
                 return res.json({
                     ok: true,
@@ -115,9 +119,7 @@ app.post('/google', async (req, res) => {
                     })
                 }
     
-                let token = jwt.sign({
-                    usuario: usuarioDB,
-                }, process.env.SEED, {expiresIn: process.env.CADUCITY_TOKEN, algorithm:'HS256'});
+                let token = createToken(usuarioDB);
 
                 return res.json({
                     ok: true,

@@ -8,13 +8,8 @@ const app = express();
 const Usuario = require('../config/models/user');
 const { verificarToken, verificarAdminRole } = require('../middlewares/auth');
 // Obtener datos
-app.get('/usuario', verificarToken,function (req, res) {
+app.get('/usuario', verificarToken, function (req, res) {
 
-    return res.json({
-        usuario: req.usuario,
-        nombre: req.usuario.nombre,
-        email: req.usuario.email
-    })
 
     let desde = req.query.desde || 0;
     let limite = req.query.limite || 5;
@@ -57,7 +52,7 @@ app.post('/usuario', [verificarToken, verificarAdminRole], (req, res) => {
         nombre: body.nombre,
         email: body.email,
         password: bcrypt.hashSync(body.password, 10),
-        role: body.role,
+        role: body.role
     });
 
     usuario.save( (err, usuarioDB) => {
@@ -86,7 +81,7 @@ app.put('/usuario/:id', [verificarToken, verificarAdminRole], function(req, res)
     // Usuario.findById(id, (err, usuarioDB) => {
 
     // });
-    console.log(body);
+    
     // Forma 2
     Usuario.findByIdAndUpdate(id, body, {new:true, runValidators: true} ,(err, usuarioDB) => {
 
