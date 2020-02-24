@@ -10,8 +10,29 @@ let verificarToken = (req, res, next) => {
     jwt.verify(token, process.env.SEED, (err, decoded) => {
         
         if(err){
-            console.log(err);
-            
+            return res.status(401).json({
+                ok:false,
+                err: {
+                    message: 'Token inválido'
+                }
+            });
+        }
+
+        req.usuario = decoded.data;
+        next();
+    })
+};
+
+// =================
+// Verificar token para imagen
+// =================
+
+let verificarTokenImg = (req, res, next) => {
+    let token = req.query.token;
+
+    jwt.verify(token, process.env.SEED, (err, decoded) => {
+        
+        if(err){
             return res.status(401).json({
                 ok:false,
                 err: {
@@ -44,5 +65,6 @@ let verificarAdminRole = (req, res, next) => {
 };
 module.exports = {
     verificarToken,
-    verificarAdminRole
+    verificarAdminRole,
+    verificarTokenImg
 }

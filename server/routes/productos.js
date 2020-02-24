@@ -91,14 +91,14 @@ app.get('/productos/buscar/:termino', verificarToken, (req, res) => {
         .exec((err, productos) => {
             
             if(err){
-                res.status(500).send({
+                return res.status(500).send({
                     ok: false,
                     err
                 })
             }
             
             if(!productos){
-                res.status(400).send({
+                return res.status(400).send({
                     ok: false,
                     err:{
                         message: 'Producto no encontrado'
@@ -106,7 +106,7 @@ app.get('/productos/buscar/:termino', verificarToken, (req, res) => {
                 })
             }
 
-            res.send({
+            return res.send({
                 ok: true,
                 productos
             })
@@ -127,18 +127,18 @@ app.post('/productos', verificarToken,(req, res) => {
         descripcion: body.descripcion,
         disponible: body.disponible,
         categoria: body.categoria,
-        usuario: req.usuario._id,
+        usuario: req.usuario._id
     });
 
     producto.save((err, productoDB) => {
         if(err){
-            res.status(500).send({
+            return res.status(500).send({
                 ok: false,
                 err,
             })
         }
 
-        res.status(201).send({
+        return res.status(201).send({
             ok: true,
             producto: productoDB
         })
@@ -156,14 +156,14 @@ app.put('/productos/:id', verificarToken,(req, res) => {
 
     Producto.findById(id, (err, productoDB)=> {
         if(err){
-            res.status(500).send({
+            return res.status(500).send({
                 ok:false,
                 err
             })
         }
 
         if(!productoDB){
-            res.status(400).send({
+            return res.status(400).send({
                 ok:false,
                 err: {
                     message: 'Producto no encontrado'
@@ -179,13 +179,13 @@ app.put('/productos/:id', verificarToken,(req, res) => {
 
         productoDB.save((err, productoActualizado) => {
             if(err){
-                res.status(500).send({
+                return res.status(500).send({
                     ok: false,
                     err
                 })
             }
 
-            res.send({
+            return res.send({
                 ok: true,
                 producto: productoActualizado
             })
@@ -203,14 +203,14 @@ app.delete('/productos/:id', verificarToken, (req, res) => {
     Producto.findById(id)
         .exec((err, productoDB) => {
             if(err){
-                res.status(500).send({
+                return res.status(500).send({
                     ok: false,
                     err
                 })
             }
             
             if(!productoDB){
-                res.status(400).send({
+                return res.status(400).send({
                     ok: false,
                     err:{
                         message: 'Producto no encontrado'
@@ -222,13 +222,13 @@ app.delete('/productos/:id', verificarToken, (req, res) => {
 
             productoDB.save((err, productoActualizado) => {
                 if(err){
-                    res.status(500).send({
+                    return res.status(500).send({
                         ok: false,
                         err
                     })
                 }
 
-                res.send({
+                return res.send({
                     ok: true,
                     producto: productoActualizado,
                     message: 'Producto borrado'
